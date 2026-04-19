@@ -6,7 +6,7 @@ from playwright.async_api import async_playwright
 # CONFIG
 URLS = [
     "https://cenacolovinciano.vivaticket.it/en/event/cenacolo-vinciano/151991",
-    "ACA_LA_SEGUNDA_URL"
+    "https://cenacolovinciano.vivaticket.it/en/event/cenacolo-visite-guidate-a-orario-fisso-in-inglese/238363"
 ]
 
 TARGET_MONTH = 6  # Junio
