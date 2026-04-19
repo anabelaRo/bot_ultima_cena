@@ -4,13 +4,18 @@ from datetime import datetime
 from playwright.async_api import async_playwright
 
 # CONFIG
-URL = "https://cenacolovinciano.vivaticket.it/en/event/cenacolo-vinciano/151991"
+URLS = [
+    "https://cenacolovinciano.vivaticket.it/en/event/cenacolo-vinciano/151991",
+    "ACA_LA_SEGUNDA_URL"
+]
+
 TARGET_MONTH = 6  # Junio
 
-TOKEN = "8773506897:AAHf__2fC3UteIHS8L9sWB7vCZAmNn4iLNU"
-CHAT_ID = "1315605699"
+TOKEN = os.getenv("TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 LAST_HEARTBEAT = None
+
 
 def send_heartbeat():
     global LAST_HEARTBEAT
@@ -19,7 +24,7 @@ def send_heartbeat():
     if LAST_HEARTBEAT is None or (now - LAST_HEARTBEAT).total_seconds() > 86400:
         send_telegram("🤖 Bot activo - sin disponibilidad aún")
         LAST_HEARTBEAT = now
-        
+
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -30,7 +35,7 @@ def send_telegram(message):
     requests.post(url, data=data)
 
 
-async def check():
+async def check(url):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -39,9 +44,9 @@ async def check():
 
         page = await browser.new_page()
 
-        print("Checking availability...")
+        print(f"Checking availability... {url}")
 
-        await page.goto(URL)
+        await page.goto(url)
         await page.wait_for_timeout(2000)
 
         # aceptar cookies
@@ -75,12 +80,12 @@ async def check():
         print("Day 5:", title5)
 
         if title4 and "not available" not in title4.lower():
-            message = "🎟️ ENTRADAS DISPONIBLES 4 JUNIO "
+            message = f"🎟️ ENTRADAS DISPONIBLES 4 JUNIO\n🌐 {url}"
             print(message)
             send_telegram(message)
 
         if title5 and "not available" not in title5.lower():
-            message = "🎟️ ENTRADAS DISPONIBLES 5 JUNIO"
+            message = f"🎟️ ENTRADAS DISPONIBLES 5 JUNIO\n🌐 {url}"
             print(message)
             send_telegram(message)
 
@@ -88,10 +93,15 @@ async def check():
 
 
 async def main():
+    send_telegram("🚀 Bot iniciado correctamente")
+
     while True:
         try:
-            await check()
+            for url in URLS:
+                await check(url)
+
             send_heartbeat()
+
         except Exception as e:
             print("Error:", e)
 
