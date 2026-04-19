@@ -23,7 +23,7 @@ def send_telegram(message):
 async def check():
     async with async_playwright() as p:
         browser = await p.chromium.launch(
-            headless=False,
+            headless=True,
             slow_mo=500
         )
 
