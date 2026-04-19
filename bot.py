@@ -10,6 +10,16 @@ TARGET_MONTH = 6  # Junio
 TOKEN = "8773506897:AAHf__2fC3UteIHS8L9sWB7vCZAmNn4iLNU"
 CHAT_ID = "1315605699"
 
+LAST_HEARTBEAT = None
+
+def send_heartbeat():
+    global LAST_HEARTBEAT
+    now = datetime.now()
+
+    if LAST_HEARTBEAT is None or (now - LAST_HEARTBEAT).total_seconds() > 86400:
+        send_telegram("🤖 Bot activo - sin disponibilidad aún")
+        LAST_HEARTBEAT = now
+        
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -81,11 +91,11 @@ async def main():
     while True:
         try:
             await check()
+            send_heartbeat()
         except Exception as e:
             print("Error:", e)
 
-        print("Esperando 5 minutos...\n")
-        await asyncio.sleep(300)
+        await asyncio.sleep(1500)
 
 
 asyncio.run(main())
