@@ -106,7 +106,7 @@ async def main():
         except Exception as e:
             print("Error:", e)
 
-        await asyncio.sleep(1500)
+        await asyncio.sleep(600)
 
 
 asyncio.run(main())
