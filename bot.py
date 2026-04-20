@@ -1,5 +1,6 @@
 import asyncio
 import requests
+import subprocess
 import os
 from datetime import datetime
 from playwright.async_api import async_playwright
@@ -95,20 +96,24 @@ async def check(url):
 
 async def main():
     print("🚀 Bot iniciado")
+    print("Installing Playwright browsers...")
+    subprocess.run(["playwright", "install", "chromium"])
 
     while True:
         try:
             print("🔎 Ejecutando check...")
-            await check()
+
+            for url in URLS:
+                await check(url)
+
             send_heartbeat()
-            print("⏱ Esperando...")
+            print("⏱ Esperando 25 minutos...")
+
         except Exception as e:
             print("❌ ERROR:", str(e))
 
-        await asyncio.sleep(1500)
+        await asyncio.sleep(1500)  # 25 minutos
+
 
 if __name__ == "__main__":
     asyncio.run(main())
-        await asyncio.sleep(1500)
-
-
