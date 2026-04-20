@@ -2,8 +2,16 @@ import asyncio
 import requests
 import subprocess
 import os
+import logging
 from datetime import datetime
 from playwright.async_api import async_playwright
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s",
+    force=True
+)
 
 # CONFIG
 URLS = [
@@ -38,6 +46,8 @@ def send_telegram(message):
 
 
 async def check(url):
+    logging.info(f"Checking availability... {url}")
+
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -46,16 +56,15 @@ async def check(url):
 
         page = await browser.new_page()
 
-        print(f"Checking availability... {url}")
-
         await page.goto(url)
         await page.wait_for_timeout(2000)
 
         # aceptar cookies
         try:
             await page.get_by_role("button", name="I agree").click(timeout=3000)
+            logging.info("Cookies aceptadas")
         except:
-            pass
+            logging.info("No cookie banner")
 
         await page.wait_for_timeout(2000)
 
@@ -63,8 +72,8 @@ async def check(url):
         current_month = datetime.now().month
         clicks_needed = TARGET_MONTH - current_month
 
-        print("Mes actual:", current_month)
-        print("Clicks necesarios:", clicks_needed)
+        logging.info(f"Mes actual: {current_month}")
+        logging.info(f"Clicks necesarios: {clicks_needed}")
 
         # hacer clicks hasta junio
         for _ in range(clicks_needed):
@@ -78,39 +87,41 @@ async def check(url):
         title4 = await day4.get_attribute("title")
         title5 = await day5.get_attribute("title")
 
-        print("Day 4:", title4)
-        print("Day 5:", title5)
+        logging.info(f"Day 4: {title4}")
+        logging.info(f"Day 5: {title5}")
 
         if title4 and "not available" not in title4.lower():
             message = f"🎟️ ENTRADAS DISPONIBLES 4 JUNIO\n🌐 {url}"
-            print(message)
+            logging.info(message)
             send_telegram(message)
 
         if title5 and "not available" not in title5.lower():
             message = f"🎟️ ENTRADAS DISPONIBLES 5 JUNIO\n🌐 {url}"
-            print(message)
+            logging.info(message)
             send_telegram(message)
 
         await browser.close()
 
 
 async def main():
-    print("🚀 Bot iniciado")
-    print("Installing Playwright browsers...")
+    logging.info("🚀 Bot iniciado")
+    logging.info("Installing Playwright browsers...")
+
     subprocess.run(["playwright", "install", "chromium"])
 
     while True:
         try:
-            print("🔎 Ejecutando check...")
+            logging.info("🔎 Ejecutando check...")
 
             for url in URLS:
                 await check(url)
 
             send_heartbeat()
-            print("⏱ Esperando 25 minutos...")
+
+            logging.info("⏱ Esperando 25 minutos...")
 
         except Exception as e:
-            print("❌ ERROR:", str(e))
+            logging.error(f"❌ ERROR: {str(e)}")
 
         await asyncio.sleep(1500)  # 25 minutos
 
