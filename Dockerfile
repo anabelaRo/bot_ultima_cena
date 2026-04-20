@@ -6,4 +6,6 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
+RUN playwright install chromium
+
 CMD ["python", "bot.py"]
