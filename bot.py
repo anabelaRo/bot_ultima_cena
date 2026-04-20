@@ -94,17 +94,16 @@ async def check(url):
 
 
 async def main():
-    send_telegram("🚀 Bot iniciado correctamente")
+    print("🚀 Bot iniciado")
 
     while True:
         try:
-            for url in URLS:
-                await check(url)
-
+            print("🔄 Ejecutando check...")
+            await check()
             send_heartbeat()
-
+            print("⏱ Esperando siguiente ejecución...")
         except Exception as e:
-            print("Error:", e)
+            print("❌ Error:", e)
 
         await asyncio.sleep(600)
 
