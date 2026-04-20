@@ -1,1 +1,1 @@
-worker: python3 bot.py
+worker: playwright install --with-deps && python3 bot.py
