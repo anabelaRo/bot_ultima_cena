@@ -98,14 +98,17 @@ async def main():
 
     while True:
         try:
-            print("🔄 Ejecutando check...")
+            print("🔎 Ejecutando check...")
             await check()
             send_heartbeat()
-            print("⏱ Esperando siguiente ejecución...")
+            print("⏱ Esperando...")
         except Exception as e:
-            print("❌ Error:", e)
+            print("❌ ERROR:", str(e))
 
-        await asyncio.sleep(600)
+        await asyncio.sleep(1500)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+        await asyncio.sleep(1500)
 
 
-asyncio.run(main())
