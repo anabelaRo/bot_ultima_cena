@@ -40,7 +40,7 @@ async def check(url):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
-            slow_mo=500
+            args=["--no-sandbox", "--disable-dev-shm-usage"]
         )
 
         page = await browser.new_page()
