@@ -118,12 +118,12 @@ async def main():
 
             send_heartbeat()
 
-            logging.info("⏱ Esperando 25 minutos...")
+            logging.info("⏱ Esperando 10 minutos...")
 
         except Exception as e:
             logging.error(f"❌ ERROR: {str(e)}")
 
-        await asyncio.sleep(1500)  # 25 minutos
+        await asyncio.sleep(600)  # 10 minutos
 
 
 if __name__ == "__main__":
